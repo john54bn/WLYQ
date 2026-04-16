@@ -180,6 +180,7 @@
       
       let width, height;
       let stars = [];
+      let meteors = [];
       let mouse = { x: -1000, y: -1000 };
       let activeStarIndex = -1;
       let animationFrame = null;
@@ -243,76 +244,145 @@
         }
       }
 
-      function draw() {
-        if (!width || !height) return;
-        ctx.clearRect(0, 0, width, height);
-        const gradient = ctx.createLinearGradient(0, 0, 0, height);
-        gradient.addColorStop(0, '#03060a');
-        gradient.addColorStop(0.7, '#0e1a26');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = '#ffffff';
-        for (let i = 0; i < 200; i++) {
-          const sx = (i * 131) % width, sy = (i * 237) % height;
-          ctx.globalAlpha = 0.1 + 0.1 * Math.sin(i + timeOffset * 0.01);
-          ctx.beginPath();
-          ctx.arc(sx, sy, 0.5, 0, 2 * Math.PI);
-          ctx.fill();
-        }
-        stars.forEach((star, index) => {
-          const distToMouse = Math.hypot(mouse.x - star.x, mouse.y - star.y);
-          const isHovered = (distToMouse < 50);
-          const twinkle = Math.sin(timeOffset * 0.02 * star.twinkleSpeed + star.phase) * 0.2 + 0.8;
-          let radius = star.baseRadius * (0.8 + 0.3 * twinkle);
-          if (isHovered) {
-            radius = star.baseRadius * 2.2;
-            if (activeStarIndex !== index) {
-              activeStarIndex = index;
-              showMessageCard(star, mouse.x, mouse.y);
-            }
-          }
-          const gradientStar = ctx.createRadialGradient(star.x-2, star.y-2, 1, star.x, star.y, radius*3);
-          if (isHovered) {
-            gradientStar.addColorStop(0, '#f2e09f');
-            gradientStar.addColorStop(0.6, '#c5a86a');
-            gradientStar.addColorStop(1, 'transparent');
-          } else {
-            gradientStar.addColorStop(0, '#b8d4f0');
-            gradientStar.addColorStop(0.5, '#6a9ec0');
-            gradientStar.addColorStop(1, 'transparent');
-          }
-          ctx.globalAlpha = isHovered ? 1 : 0.8;
-          ctx.beginPath();
-          ctx.arc(star.x, star.y, radius, 0, 2*Math.PI);
-          ctx.fillStyle = gradientStar;
-          ctx.fill();
-          if (isHovered || radius > 2.5) {
-            ctx.strokeStyle = isHovered ? '#f5e3b3' : '#aac8f0';
-            ctx.lineWidth = isHovered ? 1.5 : 0.8;
-            ctx.globalAlpha = isHovered ? 0.9 : 0.5;
-            ctx.beginPath();
-            ctx.moveTo(star.x - radius*2, star.y);
-            ctx.lineTo(star.x - radius*0.8, star.y);
-            ctx.moveTo(star.x + radius*0.8, star.y);
-            ctx.lineTo(star.x + radius*2, star.y);
-            ctx.moveTo(star.x, star.y - radius*2);
-            ctx.lineTo(star.x, star.y - radius*0.8);
-            ctx.moveTo(star.x, star.y + radius*0.8);
-            ctx.lineTo(star.x, star.y + radius*2);
-            ctx.stroke();
-          }
-        });
-        ctx.globalAlpha = 1.0;
-        if (activeStarIndex !== -1) {
-          const star = stars[activeStarIndex];
-          if (star && Math.hypot(mouse.x - star.x, mouse.y - star.y) > 60) {
-            hideMessageCard();
-            activeStarIndex = -1;
-          }
-        }
-        timeOffset++;
-        animationFrame = requestAnimationFrame(draw);
+     function draw() {
+  if (!width || !height) return;
+  ctx.clearRect(0, 0, width, height);
+  
+  // 深邃夜空背景
+  const gradient = ctx.createLinearGradient(0, 0, 0, height);
+  gradient.addColorStop(0, '#03060a');
+  gradient.addColorStop(0.7, '#0e1a26');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  
+  // 背景闪烁的暗星
+  ctx.fillStyle = '#ffffff';
+  for (let i = 0; i < 200; i++) {
+    const sx = (i * 131) % width, sy = (i * 237) % height;
+    ctx.globalAlpha = 0.1 + 0.1 * Math.sin(i + timeOffset * 0.01);
+    ctx.beginPath();
+    ctx.arc(sx, sy, 0.5, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1.0;
+
+  // ----- 绘制流星（新增）-----
+  // 每帧有一定概率生成新流星（大约每秒2~3颗）
+  if (Math.random() < 0.02) {
+    meteors.push({
+      x: width - 50 + Math.random() * 100,            // 从右侧出现
+      y: 20 + Math.random() * (height * 0.3),         // 上半部分
+      length: 60 + Math.random() * 80,                // 尾巴长度
+      speed: 8 + Math.random() * 12,                  // 移动速度
+      opacity: 0.7 + Math.random() * 0.3,
+      angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3 // 大致45度向左下
+    });
+  }
+
+  // 更新并绘制流星
+  for (let i = meteors.length - 1; i >= 0; i--) {
+    const m = meteors[i];
+    // 移动
+    m.x -= m.speed * Math.cos(m.angle);
+    m.y += m.speed * Math.sin(m.angle);
+    m.opacity *= 0.99; // 逐渐淡出
+    
+    // 超出左边界或太淡就移除
+    if (m.x < -100 || m.y > height + 100 || m.opacity < 0.02) {
+      meteors.splice(i, 1);
+      continue;
+    }
+    
+    // 绘制流星（一条渐隐的线）
+    const tailX = m.x + m.length * Math.cos(m.angle);
+    const tailY = m.y - m.length * Math.sin(m.angle);
+    
+    const gradientMeteor = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
+    gradientMeteor.addColorStop(0, `rgba(255, 255, 255, ${m.opacity})`);
+    gradientMeteor.addColorStop(0.6, `rgba(180, 210, 255, ${m.opacity * 0.5})`);
+    gradientMeteor.addColorStop(1, 'transparent');
+    
+    ctx.beginPath();
+    ctx.moveTo(m.x, m.y);
+    ctx.lineTo(tailX, tailY);
+    ctx.strokeStyle = gradientMeteor;
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    
+    // 流星头部亮点
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, 2.5, 0, 2 * Math.PI);
+    ctx.fillStyle = `rgba(255, 255, 255, ${m.opacity})`;
+    ctx.shadowColor = '#aac8f0';
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+  // ----- 流星绘制结束 -----
+
+  // 绘制留言星星（原有逻辑不变）
+  stars.forEach((star, index) => {
+    const distToMouse = Math.hypot(mouse.x - star.x, mouse.y - star.y);
+    const isHovered = (distToMouse < 50);
+    const twinkle = Math.sin(timeOffset * 0.02 * star.twinkleSpeed + star.phase) * 0.2 + 0.8;
+    let radius = star.baseRadius * (0.8 + 0.3 * twinkle);
+    
+    if (isHovered) {
+      radius = star.baseRadius * 2.2;
+      if (activeStarIndex !== index) {
+        activeStarIndex = index;
+        showMessageCard(star, mouse.x, mouse.y);
       }
+    }
+    
+    const gradientStar = ctx.createRadialGradient(star.x-2, star.y-2, 1, star.x, star.y, radius*3);
+    if (isHovered) {
+      gradientStar.addColorStop(0, '#f2e09f');
+      gradientStar.addColorStop(0.6, '#c5a86a');
+      gradientStar.addColorStop(1, 'transparent');
+    } else {
+      gradientStar.addColorStop(0, '#b8d4f0');
+      gradientStar.addColorStop(0.5, '#6a9ec0');
+      gradientStar.addColorStop(1, 'transparent');
+    }
+    
+    ctx.globalAlpha = isHovered ? 1 : 0.8;
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, radius, 0, 2*Math.PI);
+    ctx.fillStyle = gradientStar;
+    ctx.fill();
+    
+    if (isHovered || radius > 2.5) {
+      ctx.strokeStyle = isHovered ? '#f5e3b3' : '#aac8f0';
+      ctx.lineWidth = isHovered ? 1.5 : 0.8;
+      ctx.globalAlpha = isHovered ? 0.9 : 0.5;
+      ctx.beginPath();
+      ctx.moveTo(star.x - radius*2, star.y);
+      ctx.lineTo(star.x - radius*0.8, star.y);
+      ctx.moveTo(star.x + radius*0.8, star.y);
+      ctx.lineTo(star.x + radius*2, star.y);
+      ctx.moveTo(star.x, star.y - radius*2);
+      ctx.lineTo(star.x, star.y - radius*0.8);
+      ctx.moveTo(star.x, star.y + radius*0.8);
+      ctx.lineTo(star.x, star.y + radius*2);
+      ctx.stroke();
+    }
+  });
+  
+  ctx.globalAlpha = 1.0;
+  
+  if (activeStarIndex !== -1) {
+    const star = stars[activeStarIndex];
+    if (star && Math.hypot(mouse.x - star.x, mouse.y - star.y) > 60) {
+      hideMessageCard();
+      activeStarIndex = -1;
+    }
+  }
+  
+  timeOffset++;
+  animationFrame = requestAnimationFrame(draw);
+}
 
       function showMessageCard(star, mx, my) {
         if (!star || !star.commentData) return;
