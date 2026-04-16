@@ -168,10 +168,8 @@
     (function(){
       "use strict";
 
-      // ⚠️ 请替换为你自己的 Supabase 信息
-      const SUPABASE_URL = 'https://lqgvdehnaocvlbyzonhk.supabase.co
-
-';
+      // ⚠️ 你的 Supabase 信息（已经填好了）
+      const SUPABASE_URL = 'https://lqgvdehnaocvlbyzonhk.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxZ3ZkZWhuYW9jdmxieXpvbmhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMjQzOTEsImV4cCI6MjA5MTkwMDM5MX0.dyM7R7pqIal1Y8UFpoKk5TBE0YZQrxYwvXfIgzV5Mx8';
       
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -189,13 +187,6 @@
       let commentsData = [];
 
       async function fetchComments() {
-        if (SUPABASE_URL.includes('你的项目ID')) {
-          // 演示数据
-          return [
-            { nick: 'wl', message: '晚霖映秋，这个名字真好听。' },
-            { nick: 'wl', message: '我今天很开心，希望你也是。' },
-          ];
-        }
         try {
           const { data, error } = await supabase
             .from('messages')
