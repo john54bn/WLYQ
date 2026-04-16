@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Store</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <h1>游戏商店</h1>
+    <div id="userSection">
+      <button id="loginButton">登录</button>
+      <button id="registerButton">注册</button>
+      <div id="userDetails"></div>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search for games...">
+    </div>
+    <div id="gameList" class="game-list"></div>
+    <!-- 在<div id="cart"></div>的位置替换为以下完整购物车结构 -->
+<div id="cartSection" class="cart-section">
+  <h2>Shopping Cart</h2>
+  <div id="cartItems" class="cart-items">
+    <!-- 购物车商品将在这里动态生成 -->
+  </div>
+  <div class="cart-summary">
+    <p>Total: <span id="cartTotal">¥0</span></p>
+    <button id="checkoutButton">Checkout</button>
+  </div>
+</div>
+    <!-- Modal for Game Details -->
+    <div id="gameDetailModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" id="closeModal">&times;</span>
+        <h2 id="gameDetailName"></h2>
+        <img id="gameDetailImage" alt="Game Image" class="game-image">
+        <p id="gameDetailPrice"></p>
+        <div id="gameComments"></div>
+        <input type="text" id="newCommentInput" placeholder="Add a comment...">
+        <button id="addCommentButton">Add Comment</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
