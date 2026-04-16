@@ -1,48 +1,726 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Store</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>魔女之旅 · 伊蕾娜纪念站</title>
+  <!-- 优雅字体与图标库 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: #0f0c1f;  /* 深邃夜空 */
+      color: #f3e9de;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 梦幻星空背景 (动态闪烁) */
+    .starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -2;
+      background: radial-gradient(circle at 30% 40%, #1a1640 0%, #0b0820 100%);
+    }
+
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      box-shadow: 200px 120px 2px rgba(255, 240, 200, 0.6),
+                  800px 300px 3px rgba(210, 180, 255, 0.5),
+                  1200px 80px 1px #ffe8b0,
+                  400px 700px 2px #cbb2ff,
+                  1000px 600px 2px #f5e3b6,
+                  80px 900px 1px #e0c8ff,
+                  1400px 400px 3px #f3d9b1,
+                  600px 200px 2px #bca0ff,
+                  300px 450px 1px #ffefcf,
+                  1100px 850px 2px #dac0ff;
+      animation: twinkle 4s infinite alternate;
+    }
+
+    .stars::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      box-shadow: 500px 1000px 2px #fbe4b0,
+                  1500px 150px 1px #ddcaff,
+                  900px 950px 3px #ffeac2,
+                  200px 1500px 2px #cbb5ff,
+                  1300px 1200px 1px #ffe1b3,
+                  1600px 700px 2px #e3ceff;
+      animation: twinkle 5s infinite alternate-reverse;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    /* 漂浮魔法粒子 */
+    .magic-dust {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      background: radial-gradient(circle at 20% 40%, rgba(180, 140, 255, 0.08) 0%, transparent 30%),
+                  radial-gradient(circle at 80% 70%, rgba(255, 220, 150, 0.06) 0%, transparent 40%);
+    }
+
+    /* 主容器 */
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* ----- 导航栏 ----- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(230, 210, 255, 0.15);
+      backdrop-filter: blur(8px);
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #f5e6d3, #d4bff9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 12px rgba(210, 170, 255, 0.5);
+    }
+
+    .logo i {
+      font-size: 1.8rem;
+      color: #dbbcff;
+      margin-right: 8px;
+      background: none;
+      -webkit-background-clip: unset;
+      background-clip: unset;
+      color: #e1c9ff;
+      text-shadow: 0 0 8px #b388ff;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      color: #f0e2d0;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a i {
+      margin-right: 6px;
+      font-size: 0.95rem;
+      color: #c8adff;
+    }
+
+    .nav-links a:hover {
+      color: #fff3e0;
+      border-bottom-color: #c6a5ff;
+      text-shadow: 0 0 6px #c2a0ff;
+    }
+
+    /* ----- HERO 区域 ----- */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 70px 20px 60px;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.2rem;
+      font-weight: 600;
+      background: linear-gradient(to right, #fbe9d2, #ecd8ff, #b7a4ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 16px;
+      text-shadow: 0 0 25px #7a5ac5;
+      letter-spacing: 2px;
+    }
+
+    .hero .sub {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      color: #dfd0ff;
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .hero-desc {
+      max-width: 650px;
+      font-size: 1.2rem;
+      color: #cdc0e6;
+      margin: 20px 0 30px;
+      backdrop-filter: blur(4px);
+      padding: 8px 20px;
+      border-radius: 48px;
+      background: rgba(30, 20, 50, 0.25);
+      border: 1px solid rgba(210, 180, 255, 0.2);
+    }
+
+    .hero-btn {
+      background: rgba(50, 35, 80, 0.6);
+      border: 1.5px solid #bfa6ff;
+      color: #f3e9fc;
+      padding: 12px 36px;
+      font-size: 1.2rem;
+      border-radius: 48px;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 4px 18px rgba(140, 90, 220, 0.3);
+      transition: 0.25s;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .hero-btn i {
+      margin-right: 10px;
+      color: #dac2ff;
+    }
+
+    .hero-btn:hover {
+      background: #4f3885;
+      border-color: #e3ccff;
+      box-shadow: 0 0 20px #aa8eff;
+      transform: translateY(-3px);
+    }
+
+    /* 通用section */
+    section {
+      margin: 70px 0;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      text-align: center;
+      margin-bottom: 50px;
+      color: #efe2ff;
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
+    .section-title i {
+      color: #cfb5ff;
+      margin: 0 18px;
+      font-size: 2.2rem;
+    }
+
+    .section-title::before,
+    .section-title::after {
+      content: "✦";
+      color: #baa2ff;
+      margin: 0 18px;
+      font-size: 1.8rem;
+      opacity: 0.8;
+    }
+
+    /* 关于区域卡片 */
+    .about-card {
+      background: rgba(18, 12, 34, 0.55);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(200, 170, 255, 0.25);
+      border-radius: 36px;
+      padding: 40px 48px;
+      max-width: 900px;
+      margin: 0 auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(180, 140, 255, 0.1) inset;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .about-card i {
+      color: #dcc5ff;
+      margin: 0 6px;
+    }
+
+    .about-card p {
+      margin-bottom: 18px;
+    }
+
+    .signature {
+      margin-top: 20px;
+      font-style: italic;
+      color: #cfbef5;
+    }
+
+    /* 角色卡片网格 */
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+    }
+
+    .char-card {
+      background: rgba(25, 18, 45, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(210, 180, 250, 0.2);
+      border-radius: 28px;
+      padding: 32px 18px 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.6);
+    }
+
+    .char-card:hover {
+      transform: translateY(-10px);
+      border-color: #b594ff;
+      box-shadow: 0 18px 30px -5px #2f1d5e, 0 0 18px #7b61b0;
+    }
+
+    .char-avatar {
+      font-size: 5.2rem;
+      margin-bottom: 18px;
+      color: #ecdaff;
+      filter: drop-shadow(0 4px 8px #4a2a7a);
+    }
+
+    .char-card h3 {
+      font-size: 2rem;
+      font-family: 'Playfair Display', serif;
+      color: #f3e4ff;
+      margin-bottom: 6px;
+    }
+
+    .char-title {
+      color: #bca6ff;
+      font-weight: 500;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    .char-desc {
+      color: #d9c9f0;
+      font-size: 0.98rem;
+      padding: 0 6px;
+    }
+
+    /* 图库 (旅行相册) */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .gallery-item {
+      background: rgba(20, 12, 38, 0.6);
+      border-radius: 24px;
+      overflow: hidden;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(200, 165, 255, 0.2);
+      transition: 0.2s;
+    }
+
+    .gallery-item:hover {
+      border-color: #cbb2ff;
+      box-shadow: 0 8px 22px #2e1a55;
+    }
+
+    .gallery-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      background: #2e2250;
+    }
+
+    .gallery-caption {
+      padding: 18px 14px;
+      color: #ede2ff;
+    }
+
+    .gallery-caption h4 {
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .gallery-caption p {
+      color: #c8b6e9;
+      font-size: 0.95rem;
+    }
+
+    /* 名言区域 */
+    .quote-block {
+      background: linear-gradient(145deg, rgba(40, 25, 70, 0.7), rgba(15, 8, 35, 0.8));
+      backdrop-filter: blur(12px);
+      border-left: 8px solid #b28aff;
+      border-radius: 48px 16px 48px 16px;
+      padding: 45px 45px;
+      max-width: 850px;
+      margin: 50px auto;
+      text-align: center;
+      box-shadow: 0 0 35px #311f55;
+    }
+
+    .quote-text {
+      font-size: 1.9rem;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: #f5e9ff;
+      line-height: 1.5;
+    }
+
+    .quote-author {
+      margin-top: 25px;
+      font-size: 1.3rem;
+      color: #dccaff;
+    }
+
+    .quote-author i {
+      margin: 0 10px;
+      color: #b596ff;
+    }
+
+    /* 页脚 */
+    .footer {
+      margin-top: 70px;
+      padding: 30px 0 25px;
+      text-align: center;
+      border-top: 1px solid rgba(190, 160, 255, 0.2);
+      color: #b9a4db;
+      font-size: 1rem;
+    }
+
+    .footer i {
+      color: #d5b5ff;
+      margin: 0 4px;
+    }
+
+    .footer a {
+      color: #e2ceff;
+      text-decoration: none;
+      border-bottom: 1px dotted;
+    }
+
+    /* 响应式 */
+    @media (max-width: 800px) {
+      .navbar {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .nav-links {
+        gap: 22px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .hero h1 {
+        font-size: 3rem;
+      }
+      .section-title {
+        font-size: 2.2rem;
+        white-space: normal;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .about-card {
+        padding: 30px 22px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2.3rem;
+      }
+      .hero .sub {
+        font-size: 1.2rem;
+      }
+      .quote-text {
+        font-size: 1.4rem;
+      }
+    }
+
+    /* 平滑滚动 */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* 装饰小标记 */
+    .divider {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin: 30px 0 10px;
+      color: #ad93e3;
+    }
+  </style>
 </head>
 <body>
-  <div class="app">
-    <h1>游戏商店</h1>
-    <div id="userSection">
-      <button id="loginButton">登录</button>
-      <button id="registerButton">注册</button>
-      <div id="userDetails"></div>
-    </div>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search for games...">
-    </div>
-    <div id="gameList" class="game-list"></div>
-    <!-- 在<div id="cart"></div>的位置替换为以下完整购物车结构 -->
-<div id="cartSection" class="cart-section">
-  <h2>Shopping Cart</h2>
-  <div id="cartItems" class="cart-items">
-    <!-- 购物车商品将在这里动态生成 -->
-  </div>
-  <div class="cart-summary">
-    <p>Total: <span id="cartTotal">¥0</span></p>
-    <button id="checkoutButton">Checkout</button>
-  </div>
-</div>
-    <!-- Modal for Game Details -->
-    <div id="gameDetailModal" class="modal">
-      <div class="modal-content">
-        <span class="close-button" id="closeModal">&times;</span>
-        <h2 id="gameDetailName"></h2>
-        <img id="gameDetailImage" alt="Game Image" class="game-image">
-        <p id="gameDetailPrice"></p>
-        <div id="gameComments"></div>
-        <input type="text" id="newCommentInput" placeholder="Add a comment...">
-        <button id="addCommentButton">Add Comment</button>
+  <!-- 星空背景 -->
+  <div class="starfield"></div>
+  <div class="stars"></div>
+  <div class="magic-dust"></div>
+
+  <div class="container">
+    <!-- 导航区 -->
+    <nav class="navbar">
+      <div class="logo">
+        <i class="fas fa-hat-wizard"></i> 魔女之旅
+      </div>
+      <div class="nav-links">
+        <a href="#home"><i class="fas fa-home"></i> 启程</a>
+        <a href="#about"><i class="fas fa-scroll"></i> 物语</a>
+        <a href="#characters"><i class="fas fa-users"></i> 旅人</a>
+        <a href="#gallery"><i class="fas fa-images"></i> 风景</a>
+      </div>
+    </nav>
+
+    <!-- HERO 首页 -->
+    <section id="home">
+      <div class="hero">
+        <h1>魔女之旅</h1>
+        <div class="sub">~ 伊蕾娜的巡礼 ~</div>
+        <div class="hero-desc">
+          <i class="fas fa-feather-alt"></i> 踏遍繁花与废墟，记录魔女的一期一会 <i class="fas fa-map-signs"></i>
+        </div>
+        <button class="hero-btn" onclick="document.querySelector('#about').scrollIntoView({behavior:'smooth'})">
+          <i class="fas fa-broom"></i> 开始旅程
+        </button>
+        <div class="divider">
+          <i class="fas fa-star"></i> <i class="fas fa-moon"></i> <i class="fas fa-star"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- 关于·魔女之旅 -->
+    <section id="about">
+      <h2 class="section-title"><i class="fas fa-book-open"></i> 旅途之书 <i class="fas fa-book-open"></i></h2>
+      <div class="about-card">
+        <p><i class="fas fa-quote-left"></i> 某个少女的旅行，也是某个魔女的记录。</p>
+        <p>《魔女之旅》讲述了天才魔女 <strong>伊蕾娜</strong> 在取得魔女资格后，踏上自由旅程的故事。她邂逅形形色色的国家与人物，有时欢笑、有时感伤，但脚步从未停止。</p>
+        <p>「世界是一本巨大的故事书，而我，想做那个翻阅书页的人。」</p>
+        <p class="signature"><i class="fas fa-hat-wizard"></i> —— 灰之魔女·伊蕾娜 <i class="fas fa-feather"></i></p>
+      </div>
+    </section>
+
+    <!-- 主要角色 -->
+    <section id="characters">
+      <h2 class="section-title"><i class="fas fa-hat-wizard"></i> 同行的旅人 <i class="fas fa-hat-wizard"></i></h2>
+      <div class="character-grid">
+        <!-- 伊蕾娜 -->
+        <div class="char-card">
+          <div class="char-avatar">
+            <i class="fas fa-user-graduate"></i> 
+            <i class="fas fa-magic" style="font-size: 2rem; margin-left: -10px;"></i>
+          </div>
+          <h3>伊蕾娜</h3>
+          <div class="char-title">灰之魔女 · 星尘旅行者</div>
+          <div class="char-desc">“没错，我很可爱。” 才华横溢又带点自恋的天才魔女。喜欢面包和悠闲的旅途，笔下的日记记录着无数奇异国度。</div>
+        </div>
+        <!-- 沙耶 -->
+        <div class="char-card">
+          <div class="char-avatar">
+            <i class="fas fa-user-ninja"></i>
+            <i class="fas fa-fire" style="font-size: 1.8rem; margin-left: 5px;"></i>
+          </div>
+          <h3>沙耶</h3>
+          <div class="char-title">炭之魔女 · 热情的追随者</div>
+          <div class="char-desc">在魔法师之国与伊蕾娜相遇的少女，对伊蕾娜抱有强烈的憧憬（与爱慕）。认真努力，有点冒失却无比真诚。</div>
+        </div>
+        <!-- 芙兰 -->
+        <div class="char-card">
+          <div class="char-avatar">
+            <i class="fas fa-user-tie"></i>
+            <i class="fas fa-star" style="font-size: 2rem;"></i>
+          </div>
+          <h3>芙兰</h3>
+          <div class="char-title">星尘魔女 · 自由的导师</div>
+          <div class="char-desc">伊蕾娜的师父，实力深不可测。看似懒散随性，却总在关键时刻给予指引。口头禅是“真麻烦啊~”。</div>
+        </div>
+        <!-- 艾姆妮西亚 -->
+        <div class="char-card">
+          <div class="char-avatar">
+            <i class="fas fa-user-astronaut"></i>
+            <i class="fas fa-cloud-moon"></i>
+          </div>
+          <h3>艾姆妮西亚</h3>
+          <div class="char-title">忘我魔女 · 记忆的旅人</div>
+          <div class="char-desc">失去记忆的魔女，在旅途中寻找真正的自己。与伊蕾娜的相遇改变了她命运的轨迹。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 旅途图库 / 纪念相册 -->
+    <section id="gallery">
+      <h2 class="section-title"><i class="fas fa-camera-retro"></i> 旅途剪影 <i class="fas fa-camera-retro"></i></h2>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <!-- 使用稳定且富有意境的图片ID (来自 picsum) 代表旅行风景 -->
+          <img class="gallery-img" src="https://picsum.photos/id/1043/400/260" alt="魔法使之国 · 钟楼" loading="lazy">
+          <div class="gallery-caption">
+            <h4><i class="fas fa-clock"></i> 魔法使之国</h4>
+            <p>伊蕾娜通过魔法考试的地方，也是与沙耶相遇的起点。</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://picsum.photos/id/42/400/260" alt="钢琴与回忆" loading="lazy">
+          <div class="gallery-caption">
+            <h4><i class="fas fa-music"></i> 音乐之城</h4>
+            <p>自动演奏的钢琴，藏着一段悲伤而温暖的往事。</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://picsum.photos/id/29/400/260" alt="雪原与足迹" loading="lazy">
+          <div class="gallery-caption">
+            <h4><i class="fas fa-snowflake"></i> 雪之国度</h4>
+            <p>在纷飞大雪中，魔女们交换着彼此的誓言与回忆。</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://picsum.photos/id/57/400/260" alt="街道与黄昏" loading="lazy">
+          <div class="gallery-caption">
+            <h4><i class="fas fa-city"></i> 自由之城</h4>
+            <p>没有法律的城市，却拥有独特的秩序与温暖。</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://picsum.photos/id/84/400/260" alt="花田与扫帚" loading="lazy">
+          <div class="gallery-caption">
+            <h4><i class="fas fa-tree"></i> 花之平原</h4>
+            <p>伊蕾娜最喜欢停留的地方，微风与花香伴随日记。</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://picsum.photos/id/122/400/260" alt="古老遗迹" loading="lazy">
+          <div class="gallery-caption">
+            <h4><i class="fas fa-archway"></i> 遗迹之国</h4>
+            <p>古老的文明静默矗立，魔女在此解读过往。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 名言 / 纪念 -->
+    <div class="quote-block">
+      <div class="quote-text">
+        <i class="fas fa-quote-left" style="margin-right: 12px; opacity: 0.8;"></i> 
+        就算迷路也好，绕远路也罢，只要继续前进，总有一天会抵达新的风景。
+        <i class="fas fa-quote-right" style="margin-left: 12px; opacity: 0.8;"></i>
+      </div>
+      <div class="quote-author">
+        <i class="fas fa-feather"></i> 伊蕾娜 · 《魔女之旅》 <i class="fas fa-broom"></i>
       </div>
     </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <p>
+        <i class="fas fa-hat-wizard"></i> 献给所有热爱旅途与魔女的人 · 纪念《魔女之旅》 <i class="fas fa-map-marked-alt"></i>
+      </p>
+      <p style="margin-top: 16px; font-size: 0.9rem;">
+        <i class="fas fa-code-branch"></i> 非官方粉丝纪念站 · 图片来自旅途印象 
+        <i class="fas fa-heart" style="color: #d99eff;"></i>
+      </p>
+      <p style="margin-top: 12px;">
+        <a href="#"><i class="fab fa-twitter"></i></a>    
+        <a href="#"><i class="fab fa-instagram"></i></a>    
+        <a href="#"><i class="fas fa-envelope"></i></a>
+      </p>
+      <p style="margin-top: 24px; opacity: 0.8;">✦ 愿你也能踏上属于自己的旅程 ✦</p>
+    </footer>
   </div>
 
-  <script src="script.js"></script>
+  <!-- 简单的交互：导航点击高亮 & 滚动监听（可选）-->
+  <script>
+    (function() {
+      // 让导航链接点击更顺滑 (已有 scroll-behavior，但可防止默认锚点跳动)
+      const navLinks = document.querySelectorAll('.nav-links a');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          const targetId = this.getAttribute('href');
+          if (targetId && targetId.startsWith('#')) {
+            e.preventDefault();
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      // 给logo加一个回到顶部的小彩蛋
+      const logo = document.querySelector('.logo');
+      if (logo) {
+        logo.style.cursor = 'pointer';
+        logo.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // 简单的滚动高亮效果（仅装饰，不强制）
+      const sections = document.querySelectorAll('section, .hero, .quote-block');
+      const navItems = document.querySelectorAll('.nav-links a');
+      
+      window.addEventListener('scroll', () => {
+        let current = '';
+        const scrollPos = window.scrollY + 120;
+        
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionBottom = sectionTop + section.offsetHeight;
+          if (scrollPos >= sectionTop && scrollPos < sectionBottom) {
+            const id = section.getAttribute('id');
+            if (id) current = id;
+            else if (section.classList.contains('hero')) current = 'home';
+          }
+        });
+        
+        navItems.forEach(link => {
+          link.style.borderBottomColor = 'transparent';
+          const href = link.getAttribute('href').substring(1);
+          if (href === current || (current === 'home' && href === 'home')) {
+            link.style.borderBottomColor = '#c6a5ff';
+          }
+        });
+      });
+    })();
+  </script>
+  <!-- 备注：所有图片均使用 picsum 免费示例图，仅为视觉展示，契合旅行主题 -->
 </body>
 </html>
