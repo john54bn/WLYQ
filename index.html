@@ -27,7 +27,8 @@
       opacity: 0.8;
       font-weight: 300;
       z-index: 10;
-      pointer-events: none;
+      pointer-events: auto;
+      cursor: pointer;
     }
     .action-area {
       position: absolute;
@@ -458,6 +459,14 @@
           submitBtn.textContent = '✧ 发射到星空 ✧';
         });
 
+        // 点击名字跳转个人主页
+const nameElement = document.querySelector('.constellation-name');
+if (nameElement) {
+  nameElement.addEventListener('click', (e) => {
+    e.stopPropagation();  // 防止意外触发 Canvas 的关闭面板逻辑
+    window.open('wl.html', '_blank');
+  });
+}
         setInterval(() => {
           refreshStars().then(() => onResize());
         }, 30000);
