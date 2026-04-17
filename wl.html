@@ -11,6 +11,10 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Times New Roman', '宋体', 'Songti SC', 'KaiTi', serif;
       background: url('image/72822a4b42fec94b4103f35a9f8da692.jpg') no-repeat center center fixed;
@@ -19,7 +23,7 @@
       position: relative;
     }
 
-    /* 藕荷色渐变遮罩层，让背景图融合浪漫色调 */
+    /* 藕荷色渐变遮罩层 */
     body::before {
       content: "";
       position: fixed;
@@ -27,19 +31,27 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(230, 210, 220, 0.75), rgba(200, 180, 210, 0.65), rgba(245, 225, 235, 0.7));
-      backdrop-filter: blur(2px);
+      background: linear-gradient(135deg, rgba(230, 210, 220, 0.7), rgba(200, 180, 210, 0.6), rgba(245, 225, 235, 0.7));
+      backdrop-filter: blur(3px);
       z-index: 0;
     }
 
-    /* 所有内容放在上层 */
-    .container {
+    /* 全屏容器 */
+    .screen {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
       position: relative;
+      padding: 2rem;
       z-index: 1;
+    }
+
+    .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem 2rem 1.5rem;
-      min-height: 100vh;
+      padding: 0 0 1.5rem;
+      flex: 1;
       display: flex;
       flex-direction: column;
     }
@@ -49,7 +61,7 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
     }
 
     .avatar {
@@ -57,117 +69,150 @@
       height: 70px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
 
     .nickname {
       font-size: 2rem;
       font-weight: 350;
-      letter-spacing: 4px;
-      color: #4a3a42;
-      text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.4);
-      background: rgba(255, 245, 250, 0.3);
-      padding: 0.3rem 1.5rem;
+      letter-spacing: 6px;
+      color: #3a2a32;
+      text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
+      background: rgba(255, 245, 250, 0.6);
+      padding: 0.3rem 1.8rem;
       border-radius: 40px;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
     }
 
-    /* ----- 中间区域：专栏（展示图片和文本）----- */
-    /* ----- 专栏区域：横向滑动布局 ----- */
-.featured {
-  display: flex;
-  gap: 1.8rem;
-  overflow-x: auto;
-  overflow-y: visible;
-  scroll-snap-type: x mandatory;
-  padding: 1rem 0.5rem 1.5rem;
-  margin: 2rem 0 3rem;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(180, 130, 150, 0.4) transparent;
-}
+    /* ----- 右上角音乐播放器 ----- */
+    .music-player {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 245, 250, 0.35);
+      backdrop-filter: blur(8px);
+      padding: 6px 16px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
 
-/* 自定义滚动条（Webkit 浏览器） */
-.featured::-webkit-scrollbar {
-  height: 5px;
-}
-.featured::-webkit-scrollbar-track {
-  background: transparent;
-}
-.featured::-webkit-scrollbar-thumb {
-  background: rgba(180, 130, 150, 0.3);
-  border-radius: 20px;
-}
-.featured::-webkit-scrollbar-thumb:hover {
-  background: rgba(180, 130, 150, 0.6);
-}
+    #musicTitle {
+      color: #3a2a32;
+      font-size: 0.95rem;
+      max-width: 130px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
 
-.card {
-  flex: 0 0 280px;           /* 固定宽度，不伸缩 */
-  scroll-snap-align: start;
-  background: rgba(255, 245, 250, 0.15);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 32px;
-  padding: 1.8rem 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 20px -5px rgba(80, 40, 60, 0.1);
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-   display: flex;
-  flex-direction: column;
-  height: 380px;          /* 固定高度，超出部分滚动 */
-  overflow-y: auto;
-}
+    .music-player button {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #3a2a32;
+      padding: 0 4px;
+      transition: transform 0.2s;
+    }
 
-.card:hover {
-  transform: translateY(-6px);
-  background: rgba(255, 245, 250, 0.35);
-  box-shadow: 0 15px 30px -8px rgba(100, 50, 70, 0.2);
-  border-color: rgba(255, 255, 255, 0.7);
-}
+    .music-player button:hover {
+      transform: scale(1.15);
+      color: #1a1014;
+    }
 
-.card-img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 20px;
-  margin-bottom: 1.2rem;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
+    /* ----- 专栏区域：横向滑动 ----- */
+    .featured {
+      display: flex;
+      gap: 1.8rem;
+      overflow-x: auto;
+      overflow-y: visible;
+      scroll-snap-type: x mandatory;
+      padding: 1rem 0.5rem 1.5rem;
+      margin: 1rem 0 2rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(160, 110, 130, 0.5) transparent;
+    }
 
-.card-title {
-  font-size: 1.5rem;
-  font-weight: 380;
-  letter-spacing: 2px;
-  color: #3f2e38;
-  margin-bottom: 0.5rem;
-  border-left: 4px solid #b08a9e;
-  padding-left: 1rem;
-}
+    .featured::-webkit-scrollbar {
+      height: 6px;
+    }
+    .featured::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .featured::-webkit-scrollbar-thumb {
+      background: rgba(160, 110, 130, 0.5);
+      border-radius: 20px;
+    }
 
-.card-text {
-  color: #4d3a44;
-  line-height: 1.7;
-  font-size: 1rem;
-  opacity: 0.9;
-}
+    .card {
+      flex: 0 0 280px;
+      scroll-snap-align: start;
+      background: rgba(255, 245, 250, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 32px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 20px -5px rgba(60, 30, 40, 0.15);
+      transition: transform 0.2s, background 0.2s;
+      display: flex;
+      flex-direction: column;
+      height: 360px;
+      overflow-y: auto;
+    }
 
-/* 提示滑动的小标记（可选） */
-.scroll-hint {
-  text-align: right;
-  font-size: 0.85rem;
-  color: rgba(80, 50, 65, 0.5);
-  margin-top: -1.5rem;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-}
+    .card:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 245, 250, 0.45);
+      border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .card-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      color: #2b1e24;
+      margin-bottom: 0.5rem;
+      border-left: 4px solid #a07080;
+      padding-left: 1rem;
+    }
+
+    .card-text {
+      color: #3a2a32;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .scroll-hint {
+      text-align: right;
+      font-size: 0.85rem;
+      color: rgba(70, 40, 50, 0.6);
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+      letter-spacing: 2px;
+    }
+
     /* ----- 左下角：联系方式 ----- */
     .footer {
       display: flex;
       align-items: center;
-      gap: 2rem;
+      gap: 1.5rem;
       flex-wrap: wrap;
       margin-top: auto;
       padding-top: 1.5rem;
@@ -177,380 +222,364 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      color: #4a3540;
+      color: #3a2a32;
       text-decoration: none;
-      font-size: 1.1rem;
-      background: rgba(255, 240, 245, 0.4);
+      font-size: 1.05rem;
+      background: rgba(255, 240, 245, 0.5);
       padding: 0.5rem 1.2rem;
       border-radius: 40px;
       backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       transition: all 0.2s;
     }
 
     .contact-item:hover {
-      background: rgba(255, 255, 255, 0.6);
-      box-shadow: 0 4px 12px rgba(150, 100, 120, 0.2);
-      color: #2b1e24;
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 12px rgba(120, 70, 90, 0.2);
+      color: #1a1014;
     }
 
     .contact-icon {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
     }
 
-    /* ----- 右上角音乐播放器 ----- */
-.music-player {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 245, 250, 0.25);
-  backdrop-filter: blur(8px);
-  padding: 6px 16px;
-  border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-#musicTitle {
-  color: #4a3540;
-  font-size: 0.9rem;
-  max-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.music-player button {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  cursor: pointer;
-  color: #4a3540;
-  padding: 0 4px;
-}
-
-@keyframes musicFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-    
-    /* 简单的响应式 */
-    @media (max-width: 600px) {
-      .container { padding: 1.5rem; }
-      .nickname { font-size: 1.6rem; }
-      .avatar { width: 55px; height: 55px; }
-    }
-
-    /* 返回星空链接 */
     .back-link {
       margin-left: auto;
-      color: #5e4452;
+      color: #3a2a32;
       text-decoration: none;
       font-size: 1rem;
-      background: rgba(255, 240, 245, 0.4);
-      padding: 0.5rem 1.5rem;
+      background: rgba(255, 240, 245, 0.5);
+      padding: 0.5rem 1.8rem;
       border-radius: 40px;
       backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       transition: all 0.2s;
     }
 
     .back-link:hover {
-      background: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.7);
     }
+
+    /* ----- 第二屏：博客区域（全部加深，清晰可见） ----- */
     .blog-screen {
-  display: flex;
-  align-items: center;
-}
-.blog-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
-  gap: 2rem 4rem;
-}
-.intro-left {
-  grid-column: 1;
-  grid-row: 1;
-}
-.greeting {
-  font-size: 1rem;
-  letter-spacing: 4px;
-  color: #6b4e5e;
-}
-.intro-left h1 {
-  font-size: 4rem;
-  font-weight: 300;
-  letter-spacing: 10px;
-  margin: 0.5rem 0 1.5rem;
-  color: #2b1e24;                     /* 更深 */
-  text-shadow: 4px 4px 0 rgba(255, 255, 255, 0.5);  /* 加强投影 */
-}
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.intro-text {
-  font-size: 1.1rem;
-  line-height: 1.9;
-  max-width: 600px;
-  color: #2b1e24;                      /* 更深 */
-  background: rgba(255, 245, 250, 0.5); /* 更实，原0.15 */
-  backdrop-filter: blur(6px);
-  padding: 1.5rem 2rem;
-  border-radius: 48px;
-  border-left: 6px solid rgba(180, 120, 140, 0.7);
-}
+    .blog-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2.5rem 4rem;
+    }
 
-.nav-links a {
-  font-size: 1.8rem;
-  font-weight: 350;
-  letter-spacing: 3px;
-  color: #2b1e24;                      /* 加深 */
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-  transition: 0.2s;
-  padding-bottom: 4px;
-}
-.intro-right {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: center;
-}
-.small-avatar {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.7);
-  box-shadow: 0 12px 25px rgba(60,30,40,0.15);
-}
-.blog-nav {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  margin-top: 2rem;
-}
-.nav-title {
-  font-size: 0.9rem;
-  letter-spacing: 6px;
-  color: #6b4e5e;
-  border-bottom: 1px solid rgba(150,110,130,0.3);
-  padding-bottom: 0.8rem;
-  margin-bottom: 1.5rem;
-}
-.nav-links {
-  display: flex;
-  gap: 3rem;
-  flex-wrap: wrap;
-}
-.nav-links a:hover {
-  border-bottom-color: #b08a9e;
-  transform: translateX(8px);
-}
+    .intro-left {
+      grid-column: 1;
+    }
+
+    .greeting {
+      font-size: 1.3rem;
+      letter-spacing: 8px;
+      color: #3d2630;
+      font-weight: 400;
+      margin-bottom: 0.3rem;
+    }
+
+    .intro-left h1 {
+      font-size: 4.5rem;
+      font-weight: 320;
+      letter-spacing: 12px;
+      margin: 0.2rem 0 1.5rem;
+      color: #140a0e;                     /* 极深色 */
+      text-shadow: 5px 5px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .intro-text {
+      font-size: 1.15rem;
+      line-height: 2;
+      max-width: 650px;
+      color: #140a0e;                     /* 极深色 */
+      background: rgba(255, 245, 250, 0.7); /* 更实背景 */
+      backdrop-filter: blur(8px);
+      padding: 1.5rem 2rem;
+      border-radius: 48px;
+      border-left: 8px solid #8a5f70;
+      font-weight: 400;
+    }
+
+    .intro-right {
+      grid-column: 2;
+      align-self: center;
+    }
+
+    .small-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 15px 30px rgba(60, 30, 40, 0.25);
+    }
+
+    .blog-nav {
+      grid-column: 1 / -1;
+      margin-top: 2.5rem;
+    }
+
+    .nav-title {
+      font-size: 1.1rem;
+      letter-spacing: 8px;
+      color: #3d2630;
+      border-bottom: 2px solid rgba(120, 70, 90, 0.4);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      font-size: 2rem;
+      font-weight: 380;
+      letter-spacing: 4px;
+      color: #140a0e;                     /* 极深色 */
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+      padding-bottom: 6px;
+      transition: 0.2s;
+    }
+
+    .nav-links a:hover {
+      border-bottom-color: #8a5f70;
+      transform: translateX(10px);
+      color: #000000;
+    }
+
+    /* 响应式 */
+    @media (max-width: 700px) {
+      .screen { padding: 1.5rem; }
+      .container { padding: 0; }
+      .nickname { font-size: 1.6rem; }
+      .avatar { width: 55px; height: 55px; }
+      .music-player { padding: 4px 12px; }
+      #musicTitle { max-width: 90px; }
+      .blog-container { grid-template-columns: 1fr; gap: 2rem; }
+      .intro-right { grid-column: 1; text-align: center; }
+      .small-avatar { width: 120px; height: 120px; }
+      .intro-left h1 { font-size: 3.5rem; }
+      .nav-links { gap: 2rem; }
+      .nav-links a { font-size: 1.6rem; }
+      .footer { gap: 1rem; }
+      .back-link { margin-left: 0; }
+    }
   </style>
 </head>
 <body>
   <section class="screen" id="screen1">
-  <div class="container">
-    <!-- 左上角：头像 + 昵称 -->
-    <!-- 右上角音乐播放器 -->
-    <div class="music-player" id="musicPlayer">
-  <span id="musicTitle">映秋收音机</span>
-  <button id="prevBtn">⏮️</button>
-  <button id="playPauseBtn">⏯️</button>
-  <button id="nextBtn">⏭️</button>
-  <audio id="bgMusic" loop></audio>
-</div>
-    <div class="profile">
-      <img class="avatar" src="image/abec3600c4fbf7d1e9d587127aa76b90.jpg" alt="头像">
-      <div class="nickname">晚霖映秋</div>
-    </div>
+    <div class="container">
+      <!-- 右上角音乐播放器 -->
+      <div class="music-player" id="musicPlayer">
+        <span id="musicTitle">映秋收音机</span>
+        <button id="prevBtn" title="上一首">⏮️</button>
+        <button id="playPauseBtn" title="播放/暂停">⏯️</button>
+        <button id="nextBtn" title="下一首">⏭️</button>
+        <audio id="bgMusic" loop></audio>
+      </div>
 
-    <!-- 专栏区域：可以放多个卡片，每个卡片有图片 + 文本 -->
-    <div class="featured">
-      <!-- 卡片 1 -->
-      <div class="card">
-        <img class="card-img" src="image/f4264db72997ee07abcf1410e0478466.jpg" alt="专栏图片">
-        <div class="card-title">游戏主页</div>
-        <div class="card-text">喜欢玩游戏</div>
+      <!-- 左上角头像 + 昵称 -->
+      <div class="profile">
+        <img class="avatar" src="image/abec3600c4fbf7d1e9d587127aa76b90.jpg" alt="头像">
+        <div class="nickname">晚霖映秋</div>
       </div>
-      <!-- 卡片 2 -->
-      <div class="card">
-        <img class="card-img" src="image/0c10d8ab726d9a4bd2201ffc9ac91e8c.jpg" alt="专栏图片">
-        <div class="card-title">风景主页</div>
-        <div class="card-text">偶尔拍几张</div>
+
+      <!-- 专栏区域 -->
+      <div class="featured">
+        <div class="card">
+          <img class="card-img" src="image/f4264db72997ee07abcf1410e0478466.jpg" alt="专栏图片">
+          <div class="card-title">游戏主页</div>
+          <div class="card-text">喜欢玩游戏，记录一些通关瞬间和沙雕时刻。</div>
+        </div>
+        <div class="card">
+          <img class="card-img" src="image/0c10d8ab726d9a4bd2201ffc9ac91e8c.jpg" alt="专栏图片">
+          <div class="card-title">风景主页</div>
+          <div class="card-text">偶尔拍几张，留住光影。</div>
+        </div>
+        <div class="card">
+          <img class="card-img" src="image/ba8ed249dada386ad158801480b91bab.jpg" alt="专栏图片">
+          <div class="card-title">吐槽主页</div>
+          <div class="card-text">bro 我真得吐槽你了……</div>
+        </div>
+        <div class="card">
+          <img class="card-img" src="专栏图3.jpg" alt="专栏图片">
+          <div class="card-title">暂未解锁</div>
+          <div class="card-text">敬请期待</div>
+        </div>
       </div>
-      <!-- 卡片 3（可选） -->
-      <div class="card">
-        <img class="card-img" src="image/ba8ed249dada386ad158801480b91bab.jpg" alt="专栏图片">
-        <div class="card-title">吐槽主页</div>
-        <div class="card-text">bro我真得吐槽你了</div>
-      </div>
-      <div class="card">
-        <img class="card-img" src="专栏图3.jpg" alt="专栏图片">
-        <div class="card-title">暂未解锁</div>
-        <div class="card-text"></div>
+      <div class="scroll-hint">← 左右滑动查看更多 →</div>
+
+      <!-- 左下角联系方式 + 返回星空 -->
+      <div class="footer">
+        <a class="contact-item" href="#"><span class="contact-icon">💬</span> 微信：wl24717981</a>
+        <a class="contact-item" href="mailto:john54@163.com"><span class="contact-icon">✉️</span> 邮箱</a>
+        <a class="contact-item" href="https://github.com/john54bn" target="_blank"><span class="contact-icon">🐙</span> GitHub</a>
+        <a class="back-link" href="index.html">← 返回星空</a>
       </div>
     </div>
-<div class="scroll-hint">← 左右滑动查看更多 →</div>
-    <!-- 左下角：联系方式 + 返回星空 -->
-    <div class="footer">
-      <a class="contact-item" href="#" target="_blank">
-        <span class="contact-icon">💬</span> 微信：wl24717981
-      </a>
-      <a class="contact-item" href="mailto:john54@163.com">
-        <span class="contact-icon">✉️</span> 邮箱
-      </a>
-      <a class="contact-item" href="https://github.com/john54bn" target="_blank">
-        <span class="contact-icon">🐙</span> GitHub
-      </a>
-      <!-- 可以继续加其他社交链接 -->
-      <a class="back-link" href="index.html">← 返回星空</a>
-    </div>
-  </div>
-    </section>
+  </section>
+
+  <!-- 第二屏：博客介绍 -->
   <section class="screen blog-screen" id="screen2">
-  <div class="blog-container">
-    <div class="intro-left">
-      <div class="greeting">HI, I'M</div>
-      <h1>晚霖映秋</h1>
-      <p class="intro-text">✈️已飞0️⃣个国家❗️｜
-梦想是环游世界🌍 中国留子👧🏻｜
-INFJ 期待大肠offer✉️ 丨
-曾参与过编写国家机密文件✍🏻 丨
-国家级证件持有者(身份证)💳 丨
-人生是干饭💤｜
-梦游国家40+ 我命由我不由天🌚｜
-美食品鉴师🍲 Internet冲浪达人🏄｜
-pdd资深买手🛍️ 雅思托福没考📚清华北大没报📖</p >
-    </div>
-    <div class="intro-right">
-      <img src="image/abec3600c4fbf7d1e9d587127aa76b90.jpg" alt="头像" class="small-avatar">
-    </div>
-    <div class="blog-nav">
-      <div class="nav-title">· 漫游指南 ·</div>
-      <div class="nav-links">
-        <a href=" ">游戏日常</a>
-        <a href="#">闲言碎语</a>
-        <a href="#">关于我</a>
+    <div class="blog-container">
+      <div class="intro-left">
+        <div class="greeting">HI, I'M</div>
+        <h1>晚霖映秋</h1>
+        <p class="intro-text">
+          ✈️ 已飞 0️⃣ 个国家❗️<br>
+          梦想是环游世界🌍 中国留子👧🏻<br>
+          INFJ · 期待 offer✉️<br>
+          曾参与过编写国家机密文件✍🏻<br>
+          国家级证件持有者(身份证)💳<br>
+          人生是干饭💤 梦游国家 40+<br>
+          我命由我不由天🌚<br>
+          美食品鉴师🍲 Internet 冲浪达人🏄<br>
+          pdd 资深买手🛍️<br>
+          雅思托福没考📚 清华北大没报📖
+        </p>
+      </div>
+      <div class="intro-right">
+        <img src="image/abec3600c4fbf7d1e9d587127aa76b90.jpg" alt="头像" class="small-avatar">
+      </div>
+      <div class="blog-nav">
+        <div class="nav-title">· 漫游指南 ·</div>
+        <div class="nav-links">
+          <a href="#">游戏日常</a>
+          <a href="#">闲言碎语</a>
+          <a href="#">关于我</a>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <script>
+    (function() {
+      "use strict";
+
+      // ==================== 音乐播放列表 ====================
+      const playlist = [
+        { title: 'blue blossoms', src: 'image/久遠 - blue blossoms.mp3' },
+        { title: '天亮以前说再见', src: 'image/M80000318h5s2rmNZ9.mp3' },
+        { title: '打上花火', src: 'image/Daoko 米津玄師 - 打上花火.mp3' },
+        { title: 'ありがとう', src: 'image/KOKIA - ありがとう···.mp3' }
+      ];
+
+      let currentTrack = 0;
+      const audio = document.getElementById('bgMusic');
+      const titleSpan = document.getElementById('musicTitle');
+      const playBtn = document.getElementById('playPauseBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      function loadTrack(index) {
+        if (!playlist.length) return;
+        const track = playlist[index];
+        audio.src = track.src;
+        titleSpan.textContent = track.title;
+        audio.load();
+      }
+
+      function play() {
+        audio.play().then(() => playBtn.textContent = '⏸️').catch(() => {});
+      }
+
+      function pause() {
+        audio.pause();
+        playBtn.textContent = '⏯️';
+      }
+
+      playBtn.onclick = () => audio.paused ? play() : pause();
+
+      nextBtn.onclick = () => {
+        if (!playlist.length) return;
+        currentTrack = (currentTrack + 1) % playlist.length;
+        loadTrack(currentTrack);
+        play();
+      };
+
+      prevBtn.onclick = () => {
+        if (!playlist.length) return;
+        currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+        loadTrack(currentTrack);
+        play();
+      };
+
+      audio.onended = nextBtn.onclick;
+
+      if (playlist.length) {
+        loadTrack(0);
+        audio.volume = 0.4;
+      }
+
+      window.addEventListener('load', () => {
+        if (playlist.length) play();
+      });
+
+      document.body.addEventListener('click', function tryPlay() {
+        if (audio.paused) play();
+        document.body.removeEventListener('click', tryPlay);
+      }, { once: true });
+
+      // ==================== 全屏滚动 ====================
+      const screen1 = document.getElementById('screen1');
+      const screen2 = document.getElementById('screen2');
+      if (!screen1 || !screen2) return;
+
+      let currentScreen = 1;
+      let isScrolling = false;
+
+      function goToScreen(screenNum) {
+        if (isScrolling) return;
+        isScrolling = true;
+        const target = screenNum === 1 ? screen1 : screen2;
+        target.scrollIntoView({ behavior: 'smooth' });
+        currentScreen = screenNum;
+        setTimeout(() => { isScrolling = false; }, 600);
+      }
+
+      window.addEventListener('wheel', (e) => {
+        if (isScrolling) return;
+        if (e.deltaY > 0 && currentScreen === 1) {
+          e.preventDefault();
+          goToScreen(2);
+        } else if (e.deltaY < 0 && currentScreen === 2) {
+          e.preventDefault();
+          goToScreen(1);
+        }
+      }, { passive: false });
+
+      let touchStartY = 0;
+      window.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (isScrolling) return;
+        const diff = touchStartY - e.touches[0].clientY;
+        if (Math.abs(diff) < 40) return;
+        if (diff > 0 && currentScreen === 1) {
+          e.preventDefault();
+          goToScreen(2);
+        } else if (diff < 0 && currentScreen === 2) {
+          e.preventDefault();
+          goToScreen(1);
+        }
+      }, { passive: false });
+    })();
+  </script>
 </body>
- <script>
-  (function() {
-    "use strict";
-
-    // ==================== 音乐播放列表 ====================
-    const playlist = [
-      { title: 'blue blossoms', src: 'image/久遠 - blue blossoms.mp3' },
-      { title: '天亮以前说再见', src: 'image/M80000318h5s2rmNZ9.mp3' },
-      { title: '打上花火', src: 'image/Daoko 米津玄師 - 打上花火.mp3' },
-      { title: 'ありがとう', src: 'image/KOKIA - ありがとう···.mp3' }
-    ];
-
-    let currentTrack = 0;
-    const audio = document.getElementById('bgMusic');
-    const titleSpan = document.getElementById('musicTitle');
-    const playBtn = document.getElementById('playPauseBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
-    function loadTrack(index) {
-      if (!playlist.length) return;
-      const track = playlist[index];
-      audio.src = track.src;
-      titleSpan.textContent = track.title;
-      audio.load();
-    }
-
-    function play() {
-      audio.play().then(() => playBtn.textContent = '⏸️').catch(() => {});
-    }
-
-    function pause() {
-      audio.pause();
-      playBtn.textContent = '⏯️';
-    }
-
-    playBtn.onclick = () => audio.paused ? play() : pause();
-    nextBtn.onclick = () => {
-      if (!playlist.length) return;
-      currentTrack = (currentTrack + 1) % playlist.length;
-      loadTrack(currentTrack);
-      play();
-    };
-    prevBtn.onclick = () => {
-      if (!playlist.length) return;
-      currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-      loadTrack(currentTrack);
-      play();
-    };
-    audio.onended = nextBtn.onclick;
-
-    if (playlist.length) {
-      loadTrack(0);
-      audio.volume = 0.4;
-    }
-
-    window.addEventListener('load', () => {
-      if (playlist.length) play();
-    });
-
-    document.body.addEventListener('click', function tryPlay() {
-      if (audio.paused) play();
-      document.body.removeEventListener('click', tryPlay);
-    }, { once: true });
-
-    // ==================== 全屏滚动（修复版） ====================
-    const screen1 = document.getElementById('screen1');
-    const screen2 = document.getElementById('screen2');
-    if (!screen1 || !screen2) return;
-
-    let currentScreen = 1;
-    let isScrolling = false;
-
-    function goToScreen(screenNum) {
-      if (isScrolling) return;
-      isScrolling = true;
-      const target = screenNum === 1 ? screen1 : screen2;
-      target.scrollIntoView({ behavior: 'smooth' });
-      currentScreen = screenNum;
-      setTimeout(() => { isScrolling = false; }, 600);
-    }
-
-    // 滚轮
-    window.addEventListener('wheel', (e) => {
-      if (isScrolling) return;
-      if (e.deltaY > 0 && currentScreen === 1) {
-        e.preventDefault();
-        goToScreen(2);
-      } else if (e.deltaY < 0 && currentScreen === 2) {
-        e.preventDefault();
-        goToScreen(1);
-      }
-    }, { passive: false });
-
-    // 触摸滑动
-    let touchStartY = 0;
-    window.addEventListener('touchstart', (e) => {
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    window.addEventListener('touchmove', (e) => {
-      if (isScrolling) return;
-      const diff = touchStartY - e.touches[0].clientY;
-      if (Math.abs(diff) < 40) return;
-      if (diff > 0 && currentScreen === 1) {
-        e.preventDefault();
-        goToScreen(2);
-      } else if (diff < 0 && currentScreen === 2) {
-        e.preventDefault();
-        goToScreen(1);
-      }
-    }, { passive: false });
-
-  })();
-</script>
 </html>
