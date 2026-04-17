@@ -287,19 +287,31 @@
   font-weight: 300;
   letter-spacing: 10px;
   margin: 0.5rem 0 1.5rem;
-  color: #3a2a32;
-  text-shadow: 3px 3px 0 rgba(255,255,255,0.3);
+  color: #2b1e24;                     /* 更深 */
+  text-shadow: 4px 4px 0 rgba(255, 255, 255, 0.5);  /* 加强投影 */
 }
+
 .intro-text {
-  font-size: 1.3rem;
-  line-height: 1.8;
+  font-size: 1.1rem;
+  line-height: 1.9;
   max-width: 600px;
-  color: #3f2e38;
-  background: rgba(255,245,250,0.15);
-  backdrop-filter: blur(4px);
+  color: #2b1e24;                      /* 更深 */
+  background: rgba(255, 245, 250, 0.5); /* 更实，原0.15 */
+  backdrop-filter: blur(6px);
   padding: 1.5rem 2rem;
   border-radius: 48px;
-  border-left: 6px solid rgba(200,150,170,0.6);
+  border-left: 6px solid rgba(180, 120, 140, 0.7);
+}
+
+.nav-links a {
+  font-size: 1.8rem;
+  font-weight: 350;
+  letter-spacing: 3px;
+  color: #2b1e24;                      /* 加深 */
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: 0.2s;
+  padding-bottom: 4px;
 }
 .intro-right {
   grid-column: 2;
@@ -330,15 +342,6 @@
   display: flex;
   gap: 3rem;
   flex-wrap: wrap;
-}
-.nav-links a {
-  font-size: 1.8rem;
-  font-weight: 300;
-  letter-spacing: 3px;
-  color: #3a2a32;
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-  transition: 0.2s;
 }
 .nav-links a:hover {
   border-bottom-color: #b08a9e;
@@ -435,17 +438,16 @@ pdd资深买手🛍️ 雅思托福没考📚清华北大没报📖</p >
   </div>
 </section>
 </body>
-  <script>
+ <script>
   (function() {
     "use strict";
 
-    // ==================== 音乐播放列表（多首轮换） ====================
+    // ==================== 音乐播放列表 ====================
     const playlist = [
       { title: 'blue blossoms', src: 'image/久遠 - blue blossoms.mp3' },
       { title: '天亮以前说再见', src: 'image/M80000318h5s2rmNZ9.mp3' },
       { title: '打上花火', src: 'image/Daoko 米津玄師 - 打上花火.mp3' },
       { title: 'ありがとう', src: 'image/KOKIA - ありがとう···.mp3' }
-      // 👆 请替换成你自己的音乐文件名，想加几首就往下加
     ];
 
     let currentTrack = 0;
@@ -455,109 +457,71 @@ pdd资深买手🛍️ 雅思托福没考📚清华北大没报📖</p >
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
-    // 加载指定索引的歌曲
     function loadTrack(index) {
-      if (playlist.length === 0) return;
+      if (!playlist.length) return;
       const track = playlist[index];
       audio.src = track.src;
       titleSpan.textContent = track.title;
       audio.load();
     }
 
-    // 播放
     function play() {
-      audio.play().then(function() {
-        playBtn.textContent = '⏸️';
-      }).catch(function() {
-        // 浏览器阻止自动播放，没关系
-      });
+      audio.play().then(() => playBtn.textContent = '⏸️').catch(() => {});
     }
 
-    // 暂停
     function pause() {
       audio.pause();
       playBtn.textContent = '⏯️';
     }
 
-    // 播放/暂停切换
-    playBtn.onclick = function() {
-      if (audio.paused) {
-        play();
-      } else {
-        pause();
-      }
-    };
-
-    // 下一首
-    nextBtn.onclick = function() {
-      if (playlist.length === 0) return;
+    playBtn.onclick = () => audio.paused ? play() : pause();
+    nextBtn.onclick = () => {
+      if (!playlist.length) return;
       currentTrack = (currentTrack + 1) % playlist.length;
       loadTrack(currentTrack);
       play();
     };
-
-    // 上一首
-    prevBtn.onclick = function() {
-      if (playlist.length === 0) return;
+    prevBtn.onclick = () => {
+      if (!playlist.length) return;
       currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
       loadTrack(currentTrack);
       play();
     };
+    audio.onended = nextBtn.onclick;
 
-    // 歌曲播放完毕自动下一首
-    audio.onended = function() {
-      nextBtn.onclick();
-    };
-
-    // 初始化：加载第一首歌，设置音量
-    if (playlist.length > 0) {
+    if (playlist.length) {
       loadTrack(0);
       audio.volume = 0.4;
     }
 
-    // 尝试自动播放（浏览器可能阻止，但不影响后续手动播放）
-    window.addEventListener('load', function() {
-      if (playlist.length > 0) {
-        audio.play().then(function() {
-          playBtn.textContent = '⏸️';
-        }).catch(function() {});
-      }
+    window.addEventListener('load', () => {
+      if (playlist.length) play();
     });
 
-    // 如果自动播放失败，用户第一次点击页面任意位置尝试恢复播放（仅一次）
-    document.body.addEventListener('click', function tryPlayOnce() {
-      if (audio.paused && playlist.length > 0) {
-        audio.play().then(function() {
-          playBtn.textContent = '⏸️';
-        }).catch(function() {});
-      }
-      document.body.removeEventListener('click', tryPlayOnce);
+    document.body.addEventListener('click', function tryPlay() {
+      if (audio.paused) play();
+      document.body.removeEventListener('click', tryPlay);
     }, { once: true });
 
-
-    // ==================== 全屏滚动效果（第一屏 ⇄ 第二屏） ====================
+    // ==================== 全屏滚动（修复版） ====================
     const screen1 = document.getElementById('screen1');
     const screen2 = document.getElementById('screen2');
-
-    // 如果页面上没有这两个元素（比如旧版），就不执行滚动逻辑
     if (!screen1 || !screen2) return;
 
     let currentScreen = 1;
     let isScrolling = false;
 
-    function goToScreen(screenNumber) {
+    function goToScreen(screenNum) {
       if (isScrolling) return;
       isScrolling = true;
-      const target = screenNumber === 1 ? screen1 : screen2;
+      const target = screenNum === 1 ? screen1 : screen2;
       target.scrollIntoView({ behavior: 'smooth' });
-      currentScreen = screenNumber;
-      setTimeout(function() {
-        isScrolling = false;
-      }, 700);
+      currentScreen = screenNum;
+      setTimeout(() => { isScrolling = false; }, 600);
     }
 
-    // 鼠标滚轮
-    window.addEventListener('wheel', function(e) {
+    // 滚轮
+    window.addEventListener('wheel', (e) => {
       if (isScrolling) return;
       if (e.deltaY > 0 && currentScreen === 1) {
         e.preventDefault();
@@ -568,17 +532,16 @@ pdd资深买手🛍️ 雅思托福没考📚清华北大没报📖</p >
       }
     }, { passive: false });
 
-    // 触摸滑动（移动端）
+    // 触摸滑动
     let touchStartY = 0;
-    window.addEventListener('touchstart', function(e) {
+    window.addEventListener('touchstart', (e) => {
       touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
-    window.addEventListener('touchmove', function(e) {
+    window.addEventListener('touchmove', (e) => {
       if (isScrolling) return;
-      const touchY = e.touches[0].clientY;
-      const diff = touchStartY - touchY;
-      if (Math.abs(diff) < 30) return; // 滑动距离太小则忽略
+      const diff = touchStartY - e.touches[0].clientY;
+      if (Math.abs(diff) < 40) return;
       if (diff > 0 && currentScreen === 1) {
         e.preventDefault();
         goToScreen(2);
@@ -589,14 +552,5 @@ pdd资深买手🛍️ 雅思托福没考📚清华北大没报📖</p >
     }, { passive: false });
 
   })();
-let startY = 0;
-window.addEventListener('touchstart', e => startY = e.touches[0].clientY);
-window.addEventListener('touchmove', e => {
-  if (scrolling) return;
-  const diff = startY - e.touches[0].clientY;
-  if (Math.abs(diff) < 30) return;
-  if (diff > 0 && current === 1) goTo(2);
-  else if (diff < 0 && current === 2) goTo(1);
-}, { passive: false });
 </script>
 </html>
