@@ -204,8 +204,17 @@
   top: 30px;
   right: 30px;
   z-index: 10;
-  #musicTitle {
-  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 245, 250, 0.25);
+  backdrop-filter: blur(8px);
+  padding: 6px 16px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+#musicTitle {
   color: #4a3540;
   font-size: 0.9rem;
   max-width: 120px;
@@ -213,40 +222,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-}
 
-.music-toggle {
-  background: rgba(255, 245, 250, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 50px;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.music-player button {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(100, 50, 70, 0.1);
-  padding: 0;
-}
-
-.music-toggle:hover {
-  background: rgba(255, 255, 255, 0.5);
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(120, 60, 80, 0.2);
-}
-
-.music-icon {
-  font-size: 1.8rem;
-  line-height: 1;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-}
-
-/* 播放中图标微动 */
-.music-toggle.playing .music-icon {
-  animation: musicFloat 1.5s infinite ease-in-out;
+  color: #4a3540;
+  padding: 0 4px;
 }
 
 @keyframes musicFloat {
@@ -439,14 +422,14 @@ INFJ 期待大肠offer✉️ 丨
 pdd资深买手🛍️ 雅思托福没考📚清华北大没报📖</p >
     </div>
     <div class="intro-right">
-      < img src="image/abec3600c4fbf7d1e9d587127aa76b90.jpg" alt="头像" class="small-avatar">
+      <img src="image/abec3600c4fbf7d1e9d587127aa76b90.jpg" alt="头像" class="small-avatar">
     </div>
     <div class="blog-nav">
       <div class="nav-title">· 漫游指南 ·</div>
       <div class="nav-links">
-        <a href=" ">游戏日常</a >
-        <a href="#">闲言碎语</a >
-        <a href="#">关于我</a >
+        <a href=" ">游戏日常</a>
+        <a href="#">闲言碎语</a>
+        <a href="#">关于我</a>
       </div>
     </div>
   </div>
@@ -460,7 +443,7 @@ pdd资深买手🛍️ 雅思托福没考📚清华北大没报📖</p >
     const playlist = [
       { title: 'blue blossoms', src: 'image/久遠 - blue blossoms.mp3' },
       { title: '天亮以前说再见', src: 'image/M80000318h5s2rmNZ9.mp3' },
-      { title: '打上花火', src: 'image/Daoko 米津玄師 - 打上花火.mp3' }
+      { title: '打上花火', src: 'image/Daoko 米津玄師 - 打上花火.mp3' },
       { title: 'ありがとう', src: 'image/KOKIA - ありがとう···.mp3' }
       // 👆 请替换成你自己的音乐文件名，想加几首就往下加
     ];
@@ -606,32 +589,6 @@ pdd资深买手🛍️ 雅思托福没考📚清华北大没报📖</p >
     }, { passive: false });
 
   })();
-    const screen1 = document.getElementById('screen1');
-const screen2 = document.getElementById('screen2');
-let current = 1;
-let scrolling = false;
-
-function goTo(screenNum) {
-  if (scrolling) return;
-  scrolling = true;
-  const target = screenNum === 1 ? screen1 : screen2;
-  target.scrollIntoView({ behavior: 'smooth' });
-  current = screenNum;
-  setTimeout(() => scrolling = false, 700);
-}
-
-window.addEventListener('wheel', (e) => {
-  if (scrolling) return;
-  if (e.deltaY > 0 && current === 1) {
-    e.preventDefault();
-    goTo(2);
-  } else if (e.deltaY < 0 && current === 2) {
-    e.preventDefault();
-    goTo(1);
-  }
-}, { passive: false });
-
-// 触摸滑动（移动端）
 let startY = 0;
 window.addEventListener('touchstart', e => startY = e.touches[0].clientY);
 window.addEventListener('touchmove', e => {
