@@ -161,7 +161,7 @@
     // 加载帖子
     async function loadPosts() {
       const { data, error } = await supabase
-        .from('game_posts')
+        .from('chat_posts')
         .select('*')
         .order('created_at', { ascending: false });
       if (error) {
@@ -197,7 +197,7 @@
         return;
       }
 const { error } = await supabase
-  .from('game_posts')
+  .from('chat_posts')
   .insert([{
     content,
     image_url: imageUrl || null,
