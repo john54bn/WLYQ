@@ -117,7 +117,10 @@
     <h3>📓 新随笔</h3>
     <input type="password" id="passwordInput" placeholder="密码">
     <textarea id="contentInput" rows="4" placeholder="今天想到了什么..."></textarea>
-    <input type="text" id="imageInput" placeholder="图片链接（可选）">
+    <!-- 图片上传区域 -->
+<input type="file" id="imageUpload" accept="image/*" style="margin-bottom: 1rem;">
+<div id="uploadStatus" style="margin-bottom: 0.5rem; color: #888; display: none;">上传中...</div>
+<input type="hidden" id="uploadedImageUrl">
     <button id="publishBtn">发布</button>
   </div>
 
@@ -181,12 +184,48 @@
         </div>
       `).join('');
     }
+const IMGBB_API_KEY = '00ce7fed85f097ac99598a072ac4a46d';  // 👈 改这里
 
+const imageUpload = document.getElementById('imageUpload');
+const uploadStatus = document.getElementById('uploadStatus');
+const uploadedImageUrl = document.getElementById('uploadedImageUrl');
+
+imageUpload.addEventListener('change', async function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // 显示上传状态
+  uploadStatus.style.display = 'block';
+  uploadStatus.textContent = '图片上传中...';
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    
+    if (result.success) {
+      const url = result.data.url;
+      uploadedImageUrl.value = url;
+      uploadStatus.innerHTML = `✅ 上传成功！<br><img src="${url}" style="max-width:100%; border-radius:8px; margin-top:8px;">`;
+    } else {
+      throw new Error('上传失败');
+    }
+  } catch (error) {
+    uploadStatus.textContent = '❌ 上传失败，请重试';
+    imageUpload.value = '';
+    uploadedImageUrl.value = '';
+  }
+});
     // 发布帖子
     publishBtn.addEventListener('click', async function() {
       const password = passwordInput.value.trim();
       const content = contentInput.value.trim();
-      const imageUrl = imageInput.value.trim();
+      const imageUrl = uploadedImageUrl.value;
 
       if (!content) {
         alert('内容不能为空');
