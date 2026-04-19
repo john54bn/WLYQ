@@ -196,10 +196,13 @@
         alert('密码错误');
         return;
       }
-
-      const { error } = await supabase
-        .from('game_posts')
-        .insert([{ content, image_url: imageUrl || null }]);
+const { error } = await supabase
+  .from('game_posts')
+  .insert([{
+    content,
+    image_url: imageUrl || null,
+    secret_key: password   // 新增这一行
+  }]);
 
       if (error) {
         alert('发布失败：' + error.message);
