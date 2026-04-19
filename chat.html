@@ -107,7 +107,7 @@
 <body>
 <div class="container">
   <h1>✎ 闲言碎语</h1>
-  <div class="sub">· 呢喃手记 ·</div>
+  <div class="sub">· 胡言乱语 ·</div>
 
   <div id="postsContainer"></div>
 
@@ -127,13 +127,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- 先引入 Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<script src="config.js"></script>
 <script>
   (function() {
     // 配置
     const SUPABASE_URL = 'https://lqgvdehnaocvlbyzonhk.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxZ3ZkZWhuYW9jdmxieXpvbmhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMjQzOTEsImV4cCI6MjA5MTkwMDM5MX0.dyM7R7pqIal1Y8UFpoKk5TBE0YZQrxYwvXfIgzV5Mx8';
-    const SECRET = '123456wlwl';  // 改成你自己的密码
+    const SECRET = window.SITE_SECRET;
 
     // 初始化 Supabase
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
