@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>游戏日常 · 晚霖映秋</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: #1a1e2c;
+      background-image: repeating-linear-gradient(45deg, #2a3040 0px, #2a3040 2px, #1a1e2c 2px, #1a1e2c 8px);
+      font-family: 'Courier New', 'Press Start 2P', cursive, monospace;
+      color: #e0f0e0;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2.5rem;
+      text-shadow: 4px 4px 0 #6a4e9c;
+      color: #ffd966;
+      margin-bottom: 0.5rem;
+      letter-spacing: 3px;
+    }
+    .sub {
+      color: #a8d8a8;
+      margin-bottom: 2rem;
+      border-bottom: 4px dotted #6a4e9c;
+      padding-bottom: 1rem;
+    }
+    .post {
+      background: #0f121c;
+      border: 3px solid #4e6a9c;
+      border-radius: 0 20px 0 20px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 8px 8px 0 #2a1e3c;
+    }
+    .post img {
+      max-width: 100%;
+      border: 3px solid #6a9e6a;
+      border-radius: 0 12px 0 12px;
+      margin: 1rem 0;
+      box-shadow: 4px 4px 0 #3a5e3a;
+    }
+    .post-content {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+    .post-time {
+      margin-top: 1rem;
+      color: #a0b0c0;
+      font-size: 0.8rem;
+      text-align: right;
+    }
+    .admin-panel {
+      margin-top: 3rem;
+      background: #2a2040;
+      border: 3px solid #d0a0ff;
+      padding: 1.5rem;
+      border-radius: 20px 0 20px 0;
+      display: none;
+    }
+    .admin-panel.show { display: block; }
+    .admin-panel input, .admin-panel textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      background: #0f121c;
+      border: 2px solid #6a9e6a;
+      color: #e0f0e0;
+      font-family: inherit;
+      border-radius: 8px;
+    }
+    .admin-panel button {
+      background: #6a4e9c;
+      border: none;
+      padding: 0.8rem 2rem;
+      color: white;
+      font-weight: bold;
+      border-radius: 0 12px 0 12px;
+      cursor: pointer;
+      border-bottom: 4px solid #3a2e5c;
+      font-family: inherit;
+    }
+    .secret-btn {
+      background: none;
+      border: 2px dashed #6a9e6a;
+      color: #a0c0a0;
+      padding: 0.5rem 1rem;
+      margin: 1rem 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 2rem;
+      color: #c0d0ff;
+      text-decoration: none;
+      border: 2px solid #6a9e6a;
+      padding: 0.5rem 1.5rem;
+      border-radius: 30px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🎮 GAME LOG</h1>
+  <div class="sub">· 像素存档 ·</div>
+
+  <div id="postsContainer"></div>
+
+  <button class="secret-btn" id="showAdminBtn">🔐 管理员入口</button>
+  
+  <div class="admin-panel" id="adminPanel">
+    <h3>📝 发布新动态</h3>
+    <input type="password" id="passwordInput" placeholder="输入密码">
+    <textarea id="contentInput" rows="3" placeholder="写点什么..."></textarea>
+    <input type="text" id="imageInput" placeholder="图片链接（可选）">
+    <button id="publishBtn">发布</button>
+    <p style="margin-top:1rem; font-size:0.8rem;">支持直接粘贴图片链接</p>
+  </div>
+
+  <a class="back-link" href="wl.html">← 返回小屋</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ========== 配置区域（请修改这三项） ==========
+  const SUPABASE_URL = 'https://lqgvdehnaocvlbyzonhk.supabase.co';   // 你的 Supabase URL
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxZ3ZkZWhuYW9jdmxieXpvbmhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMjQzOTEsImV4cCI6MjA5MTkwMDM5MX0.dyM7R7pqIal1Y8UFpoKk5TBE0YZQrxYwvXfIgzV5Mx8';
+  const SECRET = 'wanlin123';  // 换成你在 SQL 策略里设置的密码
+  // =============================================
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const postsContainer = document.getElementById('postsContainer');
+  const adminPanel = document.getElementById('adminPanel');
+  const showAdminBtn = document.getElementById('showAdminBtn');
+  const publishBtn = document.getElementById('publishBtn');
+  const passwordInput = document.getElementById('passwordInput');
+  const contentInput = document.getElementById('contentInput');
+  const imageInput = document.getElementById('imageInput');
+
+  async function loadPosts() {
+    const { data, error } = await supabase
+      .from('game_posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error('加载失败:', error);
+      return;
+    }
+    if (!data || data.length === 0) {
+      postsContainer.innerHTML = '<p style="color:#aaa;">还没有动态，快去发一条！</p>';
+      return;
+    }
+    postsContainer.innerHTML = data.map(post => `
+      <div class="post">
+        <div class="post-content">${post.content}</div>
+        ${post.image_url ? `<img src="${post.image_url}" alt="图片">` : ''}
+        <div class="post-time">${new Date(post.created_at).toLocaleString()}</div>
+      </div>
+    `).join('');
+  }
+
+  async function publishPost(content, imageUrl, password) {
+    if (password !== SECRET) {
+      alert('密码错误');
+      return false;
+    }
+    const { error } = await supabase
+      .from('game_posts')
+      .insert([{ content, image_url: imageUrl || null }], {
+        headers: { Authorization: `Bearer ${SECRET}` }
+      });
+    if (error) {
+      alert('发布失败：' + error.message);
+      return false;
+    }
+    return true;
+  }
+
+  showAdminBtn.addEventListener('click', () => {
+    adminPanel.classList.toggle('show');
+  });
+
+  publishBtn.addEventListener('click', async () => {
+    const content = contentInput.value.trim();
+    if (!content) {
+      alert('内容不能为空');
+      return;
+    }
+    const imageUrl = imageInput.value.trim();
+    const password = passwordInput.value.trim();
+    const success = await publishPost(content, imageUrl, password);
+    if (success) {
+      contentInput.value = '';
+      imageInput.value = '';
+      passwordInput.value = '';
+      await loadPosts();
+      adminPanel.classList.remove('show');
+    }
+  });
+
+  loadPosts();
+</script>
+</body>
+</html>
