@@ -225,50 +225,33 @@ imageUpload.addEventListener('change', async function(e) {
     uploadedImageUrl.value = '';
   }
 });
-   // 发布帖子
-publishBtn.addEventListener('click', async function() {
-  const password = passwordInput.value.trim();
-  const content = contentInput.value.trim();
-  const imageUrl = uploadedImageUrl.value;
+    // 发布帖子
+    publishBtn.addEventListener('click', async function() {
+      const password = passwordInput.value.trim();
+      const content = contentInput.value.trim();
+      const imageUrl = uploadedImageUrl.value;
 
-  if (!content) {
-    alert('内容不能为空');
-    return;
-  }
-  if (password !== SECRET) {
-    alert('密码错误');
-    return;
-  }
+      if (!content) {
+        alert('内容不能为空');
+        return;
+      }
+      if (password !== SECRET) {
+        alert('密码错误');
+        return;
+      }
 
-  const { error } = await supabase
-    .from('chat_posts')  // game.html 里改成 'game_posts'
-    .insert([{
-      content,
-      image_url: imageUrl || null,
-      secret_key: password
-    }]);
+    const { error } = await supabase
+  .from('game_posts')
+  .insert([{
+    content,
+    image_url: imageUrl || null,
+    secret_key: password   // 新增这一行
+  }]);
 
-  if (error) {
-    alert('发布失败：' + error.message);
-    return;
-  }
-
-  // ✅ 成功提示
-  alert('✨ 发布成功！');
-
-  // 清空输入、预览和密码
-  contentInput.value = '';
-  imageUpload.value = '';
-  uploadStatus.style.display = 'none';
-  uploadedImageUrl.value = '';
-  passwordInput.value = '';
-  
-  // 关闭面板
-  adminPanel.classList.remove('show');
-  
-  // 刷新列表
-  await loadPosts();
-});
+      if (error) {
+        alert('发布失败：' + error.message);
+        return;
+      }
 
       // 清空输入
       contentInput.value = '';
