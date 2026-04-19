@@ -179,7 +179,7 @@
       postsContainer.innerHTML = data.map(post => `
         <div class="post">
           <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>
-          ${post.image_url ? `< img src="${post.image_url}" alt="图片">` : ''}
+          ${post.image_url ? `<img src="${post.image_url}" alt="图片">` : ''}
           <div class="post-time">${new Date(post.created_at).toLocaleString()}</div>
         </div>
       `).join('');
